@@ -85,16 +85,3 @@ The following enhancements are planned for future iterations:
 
 ---
 
-## License
-
-(License information to be added)
-
----
-
-## Contact & Support
-
-(Contact information to be added)
-
----
-
-*Last Updated: August 12, 2023*
