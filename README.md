@@ -80,6 +80,9 @@ The following enhancements are planned for future iterations:
 ---
 
 ## Contributing
+1)Anubhav
+2)Amit
+3)Nisa
 
 (Contribution guidelines to be added)
 
