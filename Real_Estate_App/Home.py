@@ -104,7 +104,7 @@ st.markdown("###  Get Started")
 st.success("Use the sidebar to navigate between modules")
 
 # ---------------- SIDEBAR ----------------
-st.sidebar.markdown("## 🏡 Navigation")
+st.sidebar.markdown("##  Navigation")
 st.sidebar.info("Select a page to begin")
 
 # ---------------- FOOTER ----------------
