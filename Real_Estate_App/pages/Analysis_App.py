@@ -99,7 +99,7 @@ fig2 = px.pie(pie_df, names='bedRoom', title="BHK Distribution")
 st.plotly_chart(fig2, use_container_width=True)
 
 # ---------------- BOX PLOT ----------------
-st.header('📦 BHK Price Comparison')
+st.header('BHK Price Comparison')
 
 fig3 = px.box(
     new_df[new_df['bedRoom'] <= 4],
