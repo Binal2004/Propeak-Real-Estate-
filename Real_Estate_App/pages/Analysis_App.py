@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -6,22 +5,27 @@ import pickle
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Real Estate Analytics", layout="wide")
 
-st.title('Real Estate Analytics Dashboard')
+st.title('📊 Real Estate Analytics Dashboard')
+
+# ---------------- BASE PATH ----------------
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # ---------------- LOAD DATA ----------------
-new_df = pd.read_csv('datasets/data_viz1.csv')
-feature_text = pickle.load(open('datasets/feature_text.pkl','rb'))
+csv_path = os.path.join(BASE_DIR, "datasets", "data_viz1.csv")
+pkl_path = os.path.join(BASE_DIR, "datasets", "feature_text.pkl")
+
+# Load safely
+new_df = pd.read_csv(csv_path)
+feature_text = pickle.load(open(pkl_path, "rb"))
 
 # ---------------- DATA CLEANING ----------------
-# Convert columns to numeric
 cols = ['price','price_per_sqft','built_up_area','latitude','longitude']
 new_df[cols] = new_df[cols].apply(pd.to_numeric, errors='coerce')
-
-# Drop missing values
 new_df = new_df.dropna(subset=cols)
 
 # ---------------- GROUPING ----------------
@@ -66,7 +70,6 @@ st.pyplot(fig_wc)
 st.header('Area vs Price')
 
 property_type = st.selectbox('Select Property Type', ['flat','house'])
-
 filtered_df = new_df[new_df['property_type'] == property_type]
 
 fig1 = px.scatter(
@@ -80,7 +83,7 @@ fig1 = px.scatter(
 st.plotly_chart(fig1, use_container_width=True)
 
 # ---------------- PIE CHART ----------------
-st.header(' BHK Distribution')
+st.header('BHK Distribution')
 
 sector_options = new_df['sector'].dropna().unique().tolist()
 sector_options.insert(0,'overall')
@@ -93,11 +96,10 @@ else:
     pie_df = new_df[new_df['sector'] == selected_sector]
 
 fig2 = px.pie(pie_df, names='bedRoom', title="BHK Distribution")
-
 st.plotly_chart(fig2, use_container_width=True)
 
 # ---------------- BOX PLOT ----------------
-st.header('BHK Price Comparison')
+st.header('📦 BHK Price Comparison')
 
 fig3 = px.box(
     new_df[new_df['bedRoom'] <= 4],
@@ -128,4 +130,3 @@ sns.kdeplot(
 plt.legend()
 
 st.pyplot(fig4)
-
