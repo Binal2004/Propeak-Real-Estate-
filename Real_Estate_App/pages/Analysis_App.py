@@ -10,7 +10,7 @@ import os
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Real Estate Analytics", layout="wide")
 
-st.title('📊 Real Estate Analytics Dashboard')
+st.title('Real Estate Analytics Dashboard')
 
 # ---------------- BASE PATH ----------------
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
