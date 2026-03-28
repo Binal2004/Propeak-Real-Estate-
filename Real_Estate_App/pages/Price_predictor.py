@@ -1,120 +1,76 @@
-
 import streamlit as st
 import pickle
 import pandas as pd
 import numpy as np
+import gdown
+import os
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Price Predictor", layout="wide")
 
-# ---------------- CUSTOM CSS ----------------
-st.markdown("""
-<style>
-.title {
-    font-size: 45px;
-    font-weight: 800;
-    background: linear-gradient(90deg, #00d4ff, #00ffa6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+st.title("Real Estate Price Predictor")
 
-.section {
-    background: #1c1f26;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    border: 1px solid #2a2f3a;
-}
+# ---------------- DOWNLOAD MODEL FROM DRIVE ----------------
+file_id = "1hQQFW6g7eM4Vqa6XUuZCTO_Ae_nfhq5v"
+url = f"https://drive.google.com/uc?id={file_id}"
 
-.result {
-    background: linear-gradient(135deg, #00d4ff, #00ffa6);
-    padding: 25px;
-    border-radius: 20px;
-    text-align: center;
-    color: black;
-    font-weight: bold;
-}
+model_path = "pipeline.pkl"
 
-button[kind="primary"] {
-    background-color: #00d4ff;
-    color: black;
-    border-radius: 10px;
-    height: 3em;
-    width: 100%;
-}
-</style>
-""", unsafe_allow_html=True)
+if not os.path.exists(model_path):
+    with st.spinner("Downloading model..."):
+        gdown.download(url, model_path, quiet=False)
 
-# ---------------- LOAD DATA ----------------
-with open('df.pkl','rb') as file:
-    df = pickle.load(file)
+# ---------------- LOAD MODEL ----------------
+try:
+    with open(model_path, 'rb') as file:
+        pipeline = pickle.load(file)
+except:
+    st.error("Model loading failed")
+    st.stop()
 
-with open('pipeline.pkl','rb') as file:
-    pipeline = pickle.load(file)
+# ---------------- LOAD DF ----------------
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+df_path = os.path.join(BASE_DIR, "df.pkl")
 
-# ---------------- HEADER ----------------
-st.markdown('<p class="title"> Property Price Predictor</p>', unsafe_allow_html=True)
-st.write("### Fill property details below")
+try:
+    with open(df_path, 'rb') as file:
+        df = pickle.load(file)
+except:
+    st.error("df.pkl not found")
+    st.stop()
 
-# ---------------- SECTION 1 ----------------
-st.markdown('<div class="section">', unsafe_allow_html=True)
-st.subheader("Basic Details")
+# ---------------- UI ----------------
+st.header('Enter your inputs')
 
-col1, col2, col3 = st.columns(3)
+property_type = st.selectbox('Property Type',['flat','house'])
 
-with col1:
-    property_type = st.selectbox('Property Type',['flat','house'])
-    sector = st.selectbox('Sector',sorted(df['sector'].unique().tolist()))
+sector = st.selectbox('Sector',sorted(df['sector'].unique().tolist()))
 
-with col2:
-    bedrooms = float(st.selectbox('Bedrooms',sorted(df['bedRoom'].unique().tolist())))
-    bathroom = float(st.selectbox('Bathrooms',sorted(df['bathroom'].unique().tolist())))
+bedrooms = float(st.selectbox('Number of Bedroom',sorted(df['bedRoom'].unique().tolist())))
 
-with col3:
-    balcony = st.selectbox('Balconies',sorted(df['balcony'].unique().tolist()))
-    property_age = st.selectbox('Property Age',sorted(df['agePossession'].unique().tolist()))
+bathroom = float(st.selectbox('Number of Bathrooms',sorted(df['bathroom'].unique().tolist())))
 
-st.markdown('</div>', unsafe_allow_html=True)
+balcony = st.selectbox('Balconies',sorted(df['balcony'].unique().tolist()))
 
-# ---------------- SECTION 2 ----------------
-st.markdown('<div class="section">', unsafe_allow_html=True)
-st.subheader("Area & Rooms")
+property_age = st.selectbox('Property Age',sorted(df['agePossession'].unique().tolist()))
 
-col4, col5, col6 = st.columns(3)
+built_up_area = float(st.number_input('Built Up Area'))
 
-with col4:
-    built_up_area = float(st.number_input('Built Up Area (sqft)', min_value=200.0))
+servant_room = float(st.selectbox('Servant Room',[0.0, 1.0]))
+store_room = float(st.selectbox('Store Room',[0.0, 1.0]))
 
-with col5:
-    servant_room = float(st.selectbox('Servant Room',[0.0, 1.0]))
+furnishing_type = st.selectbox('Furnishing Type',sorted(df['furnishing_type'].unique().tolist()))
 
-with col6:
-    store_room = float(st.selectbox('Store Room',[0.0, 1.0]))
+luxury_category = st.selectbox('Luxury Category',sorted(df['luxury_category'].unique().tolist()))
 
-st.markdown('</div>', unsafe_allow_html=True)
+floor_category = st.selectbox('Floor Category',sorted(df['floor_category'].unique().tolist()))
 
-# ---------------- SECTION 3 ----------------
-st.markdown('<div class="section">', unsafe_allow_html=True)
-st.subheader(" Additional Features")
+# ---------------- PREDICTION ----------------
+if st.button('Predict'):
 
-col7, col8, col9 = st.columns(3)
-
-with col7:
-    furnishing_type = st.selectbox('Furnishing Type',sorted(df['furnishing_type'].unique().tolist()))
-
-with col8:
-    luxury_category = st.selectbox('Luxury Category',sorted(df['luxury_category'].unique().tolist()))
-
-with col9:
-    floor_category = st.selectbox('Floor Category',sorted(df['floor_category'].unique().tolist()))
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- BUTTON ----------------
-if st.button(' Predict Price'):
-
-    data = [[property_type, sector, bedrooms, bathroom, balcony, property_age, built_up_area,
-             servant_room, store_room, furnishing_type, luxury_category, floor_category]]
+    data = [[property_type, sector, bedrooms, bathroom, balcony, property_age,
+             built_up_area, servant_room, store_room,
+             furnishing_type, luxury_category, floor_category]]
 
     columns = ['property_type', 'sector', 'bedRoom', 'bathroom', 'balcony',
                'agePossession', 'built_up_area', 'servant room', 'store room',
@@ -122,21 +78,13 @@ if st.button(' Predict Price'):
 
     one_df = pd.DataFrame(data, columns=columns)
 
-    # prediction
-    base_price = np.expm1(pipeline.predict(one_df))[0]
-    low = base_price - 0.22
-    high = base_price + 0.22
+    try:
+        base_price = np.expm1(pipeline.predict(one_df))[0]
+        low = base_price - 0.22
+        high = base_price + 0.22
 
-    # ---------------- RESULT ----------------
-    st.markdown("---")
+        st.subheader("Predicted Price Range")
+        st.success(f"{round(low,2)} Cr - {round(high,2)} Cr")
 
-    st.markdown(f"""
-    <div class="result">
-        <h2>💰 Estimated Price</h2>
-        <h1>₹ {round(base_price,2)} Cr</h1>
-        <p>Range: ₹ {round(low,2)} Cr - ₹ {round(high,2)} Cr</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.balloons()
-
+    except:
+        st.error("Prediction failed. Check inputs.")
