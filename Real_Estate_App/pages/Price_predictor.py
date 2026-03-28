@@ -6,9 +6,36 @@ import gdown
 import os
 
 # ---------------- PAGE CONFIG ----------------
-st.set_page_config(page_title="Price Predictor", layout="wide")
+st.set_page_config(page_title="Price Predictor | Propeak", page_icon="💰", layout="wide")
 
-st.title("Real Estate Price Predictor")
+# ---------------- CUSTOM CSS ----------------
+st.markdown("""
+    <style>
+    .stSelectbox, .stNumberInput {
+        margin-bottom: 10px;
+    }
+    .prediction-card {
+        padding: 30px;
+        border-radius: 15px;
+        background-color: rgba(128, 128, 128, 0.1);
+        border: 2px solid #007bff;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .stButton>button {
+        background-color: #007bff;
+        color: white;
+        height: 3.5em;
+        font-weight: bold;
+        border-radius: 10px;
+        width: 100%;
+        margin-top: 20px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.title("💰 Real Estate Price Predictor")
+st.markdown("---")
 
 # ---------------- DOWNLOAD MODEL FROM DRIVE ----------------
 file_id = "1hQQFW6g7eM4Vqa6XUuZCTO_Ae_nfhq5v"
@@ -83,8 +110,12 @@ if st.button('Predict'):
         low = base_price - 0.22
         high = base_price + 0.22
 
-        st.subheader("Predicted Price Range")
-        st.success(f"{round(low,2)} Cr - {round(high,2)} Cr")
+        st.markdown(f"""
+            <div class="prediction-card">
+                <h3>Predicted Price Range</h3>
+                <h1 style='color: #28a745;'>{round(low,2)} Cr - {round(high,2)} Cr</h1>
+            </div>
+        """, unsafe_allow_html=True)
 
     except:
         st.error("Prediction failed. Check inputs.")

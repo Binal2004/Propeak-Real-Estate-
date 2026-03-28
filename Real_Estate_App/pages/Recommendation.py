@@ -4,7 +4,39 @@ import pandas as pd
 import numpy as np
 import os
 
-st.set_page_config(page_title="Recommend Appartments")
+st.set_page_config(page_title="Propeak Recommendations", page_icon="🏠", layout="wide")
+
+# ---------------- CUSTOM CSS ----------------
+st.markdown("""
+    <style>
+    .stSelectbox, .stNumberInput {
+        margin-bottom: 10px;
+    }
+    .reco-card {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: rgba(128, 128, 128, 0.1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+        border-left: 5px solid #28a745;
+    }
+    .stButton>button {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        width: 100%;
+        height: 3em;
+    }
+    .stButton>button:hover {
+        background-color: #218838;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.title("🏠 Smart Property Recommendations")
+st.markdown("---")
 
 #  Path fix (ONLY change)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
