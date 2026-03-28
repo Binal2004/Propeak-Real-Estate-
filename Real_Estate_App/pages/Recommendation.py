@@ -2,14 +2,18 @@ import streamlit as st
 import pickle
 import pandas as pd
 import numpy as np
+import os
 
 st.set_page_config(page_title="Recommend Appartments")
 
-location_df = pickle.load(open('datasets/location_distance.pkl','rb'))
+#  Path fix (ONLY change)
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-cosine_sim1 = pickle.load(open('datasets/cosine_sim1.pkl','rb'))
-cosine_sim2 = pickle.load(open('datasets/cosine_sim2.pkl','rb'))
-cosine_sim3 = pickle.load(open('datasets/cosine_sim3.pkl','rb'))
+location_df = pickle.load(open(os.path.join(BASE_DIR,'datasets/location_distance.pkl'),'rb'))
+
+cosine_sim1 = pickle.load(open(os.path.join(BASE_DIR,'datasets/cosine_sim1.pkl'),'rb'))
+cosine_sim2 = pickle.load(open(os.path.join(BASE_DIR,'datasets/cosine_sim2.pkl'),'rb'))
+cosine_sim3 = pickle.load(open(os.path.join(BASE_DIR,'datasets/cosine_sim3.pkl'),'rb'))
 
 
 def recommend_properties_with_scores(property_name, top_n=5):
@@ -54,7 +58,9 @@ if st.button('Search'):
     for key, value in result_ser.items():
         st.text(str(key) + " " + str(round(value/1000)) + ' kms')
 
+
 st.title('Recommend Appartments')
+
 selected_appartment = st.selectbox('Select an appartment',sorted(location_df.index.to_list()))
 
 if st.button('Recommend'):
