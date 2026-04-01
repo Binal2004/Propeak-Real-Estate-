@@ -134,7 +134,7 @@ cd Real_Estate_App
 streamlit run Home.py
 ```
 
-The app will open at `http://localhost:8501`. Use the sidebar to navigate between **Analytics** and **Price Predictor** pages.
+The app will open at https://anubhavspeaks01-propeak-real-estate--real-estate-apphome-rfjubq.streamlit.app/. Use the sidebar to navigate between **Analytics** and **Price Predictor** pages.
 
 > **Note:** The app expects `df.pkl`, `pipeline.pkl`, `datasets/data_viz1.csv`, and `datasets/feature_text.pkl` to be present in the working directory. Generate these by running the notebooks in order.
 
